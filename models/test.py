@@ -32,3 +32,6 @@ def test_img(net_g, datatest, args):
             test_loss, correct, len(data_loader.dataset), accuracy))
     return accuracy, test_loss
 
+def test_VoxCeleb(net_g, dataset, args):
+    net_g.eval()
+    pass

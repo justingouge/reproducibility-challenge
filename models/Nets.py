@@ -61,3 +61,17 @@ class CNNCifar(nn.Module):
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
         return x
+
+class CNNCelebA(nn.Module):
+    def __init__(self, args):
+        pass
+
+    def forward(self, x):
+        pass
+
+class CNNVoxCeleb:
+    pass
+
+class CNNMnistUV:
+    pass
+
