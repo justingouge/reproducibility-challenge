@@ -24,27 +24,30 @@ if __name__ == '__main__':
     args.device = torch.device('cuda:{}'.format(args.gpu) if torch.cuda.is_available() and args.gpu != -1 else 'cpu')
     
     #Codeword selection
-    #Fill in code here
+    
+
+
+
 
     # load dataset and split users
-    if args.dataset == 'mnist':
-        trans_mnist = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))])
-        dataset_train = datasets.MNIST('../data/mnist/', train=True, download=True, transform=trans_mnist)
-        dataset_test = datasets.MNIST('../data/mnist/', train=False, download=True, transform=trans_mnist)
-        # sample users
-        if args.iid:
-            dict_users = mnist_iid(dataset_train, args.num_users)
-        else:
-            dict_users = mnist_noniid(dataset_train, args.num_users)
-    elif args.dataset == 'cifar':
-        trans_cifar = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
-        dataset_train = datasets.CIFAR10('../data/cifar', train=True, download=True, transform=trans_cifar)
-        dataset_test = datasets.CIFAR10('../data/cifar', train=False, download=True, transform=trans_cifar)
-        if args.iid:
-            dict_users = cifar_iid(dataset_train, args.num_users)
-        else:
-            exit('Error: only consider IID setting in 4CIFAR10')
-    elif args.dataset == 'mnistUV':
+    # if args.dataset == 'mnist':
+    #     trans_mnist = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))])
+    #     dataset_train = datasets.MNIST('../data/mnist/', train=True, download=True, transform=trans_mnist)
+    #     dataset_test = datasets.MNIST('../data/mnist/', train=False, download=True, transform=trans_mnist)
+    #     # sample users
+    #     if args.iid:
+    #         dict_users = mnist_iid(dataset_train, args.num_users)
+    #     else:
+    #         dict_users = mnist_noniid(dataset_train, args.num_users)
+    # elif args.dataset == 'cifar':
+    #     trans_cifar = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+    #     dataset_train = datasets.CIFAR10('../data/cifar', train=True, download=True, transform=trans_cifar)
+    #     dataset_test = datasets.CIFAR10('../data/cifar', train=False, download=True, transform=trans_cifar)
+    #     if args.iid:
+    #         dict_users = cifar_iid(dataset_train, args.num_users)
+    #     else:
+    #         exit('Error: only consider IID setting in 4CIFAR10')
+    if args.dataset == 'mnistUV':
         pass
     elif args.dataset == 'celebA':
         trans_celebA = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
@@ -59,13 +62,13 @@ if __name__ == '__main__':
     img_size = dataset_train[0][0].shape
 
     # build model
-    if args.model == 'cnn' and args.dataset == 'cifar':
-        net_glob = CNNCifar(args=args).to(args.device)
-    elif args.model == 'cnn' and args.dataset == 'mnist':
-        net_glob = CNNMnist(args=args).to(args.device)
-    elif args.model == 'cnn' and args.dataset == 'mnistUV':
-        pass
-    elif args.model == 'cnn' and args.dataset == 'celebA':
+    # if args.model == 'cnn' and args.dataset == 'cifar':
+    #     net_glob = CNNCifar(args=args).to(args.device)
+    # elif args.model == 'cnn' and args.dataset == 'mnist':
+    #     net_glob = CNNMnist(args=args).to(args.device)
+    # elif args.model == 'cnn' and args.dataset == 'mnistUV':
+    #     pass
+    if args.model == 'cnn' and args.dataset == 'celebA':
         net_glob = CNNCelebA(args=args).to(args.device)
     elif args.model == 'cnn' and args.dataset == 'voxCeleb':
         pass

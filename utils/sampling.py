@@ -64,7 +64,15 @@ from torchvision import datasets, transforms
 #     return dict_users
 
 def celebA(dataset, num_users):
-    pass
+    #     """
+    #     Sample non-I.I.D client data from celebA dataset
+    #     """
+    num_shards, num_imgs = 0, 0
+    idx_shard = [i for i in range(num_shards)]
+    dict_users = {i: np.array([], dtype='int64') for i in range(num_users)}
+    idxs = np.arange(num_shards * num_imgs)
+
+    return dict_users
 
 def voxCeleb(dataset, num_users):
     pass
