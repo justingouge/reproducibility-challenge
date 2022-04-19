@@ -8,13 +8,14 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import copy
 import numpy as np
+import uuid
 from torchvision import datasets, transforms
 
-
-from utils.sampling import mnist_iid, mnist_noniid, cifar_iid, celebA, voxCeleb, mnistUV
+from bch_master.bch import generate, encode
+from utils.sampling import celebA_split, celebA_get_dict_users, voxCeleb, mnistUV
 from utils.options import args_parser
 from models.Update import LocalUpdate
-from models.Nets import MLP, CNNMnist, CNNCifar, CNNMnistUV, CNNCelebA
+from models.Nets import CNNMnistUV, CNNCelebA
 from models.Fed import FedAvg
 from models.test import test_img
 
@@ -23,11 +24,10 @@ if __name__ == '__main__':
     args = args_parser()
     args.device = torch.device('cuda:{}'.format(args.gpu) if torch.cuda.is_available() and args.gpu != -1 else 'cpu')
     
-    #Codeword selection
-    
-
-
-
+    generate(127, 64, 21, "bch_master/file")
+   
+    codeblock = encode("bch_master/file.npz", np.random.randint(1, 100, 20))
+    print(codeblock)
 
     # load dataset and split users
     # if args.dataset == 'mnist':
@@ -50,16 +50,25 @@ if __name__ == '__main__':
     if args.dataset == 'mnistUV':
         pass
     elif args.dataset == 'celebA':
-        trans_celebA = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
-        dataset_train = datasets.CelebA('../data/celebA', train=True, download=True, transform=trans_celebA)
-        dataset_test = datasets.CelebA('../data/celebA', train=False, download=True, transform=trans_celebA)
-        dict_users = celebA(dataset_train, args.num_users)
+        trans_celebA = transforms.Compose([transforms.ToTensor(), transforms.Resize([64, 64]), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+        dataset = datasets.CelebA('../data/celebA/', split='all', download=False, transform=trans_celebA, target_type="identity")
+        #dataset_test = datasets.CelebA('../data/celebA', split='test', download=True, transform=trans_celebA)
+        dataset_train, dataset_validation, dataset_test = celebA_split(dataset)
+
+        dict_users = celebA_get_dict_users(dataset_train, args.num_users)
     elif args.dataset == 'voxCeleb':
         pass
     else:
         exit('Error: unrecognized dataset')
 
-    img_size = dataset_train[0][0].shape
+
+    #Generate codewords for UV
+    user_vectors = {}
+
+    for user_id in dict_users.keys:
+        pass
+
+    #img_size = dataset_train[0][0].shape
 
     # build model
     # if args.model == 'cnn' and args.dataset == 'cifar':
@@ -67,7 +76,9 @@ if __name__ == '__main__':
     # elif args.model == 'cnn' and args.dataset == 'mnist':
     #     net_glob = CNNMnist(args=args).to(args.device)
     # elif args.model == 'cnn' and args.dataset == 'mnistUV':
-    #     pass
+    #     pass.
+
+
     if args.model == 'cnn' and args.dataset == 'celebA':
         net_glob = CNNCelebA(args=args).to(args.device)
     elif args.model == 'cnn' and args.dataset == 'voxCeleb':

@@ -64,7 +64,7 @@ import math
 #         return x
 
 class CNNCelebA(nn.Module):
-    def __init__(self, args, c):
+    def __init__(self, args):
         super(CNNCelebA, self).__init__()
         self.gn = nn.GroupNorm(num_groups=2)
         self.conv1 = nn.Conv2d(3, 64, 3, padding=1)
@@ -75,9 +75,10 @@ class CNNCelebA(nn.Module):
         self.pool1 = nn.MaxPool2d(2)
         self.pool2 = nn.MaxPool2d(4)
         self.flatten = nn.Flatten()
-        self.fc = nn.Linear(1024, c)
+        self.c = args.code_length
+        self.fc = nn.Linear(1024, args.code_length)
 
-    def forward(self, x, c):
+    def forward(self, x):
         x = self.gn(self.pool1(F.relu(self.conv1(x))))
         x = self.gn(self.pool1(F.relu(self.conv2(x))))
         x = self.gn(self.pool1(F.relu(self.conv3(x))))
@@ -85,7 +86,7 @@ class CNNCelebA(nn.Module):
         x = self.gn(self.pool2(F.relu(self.conv5(x))))
         x = self.flatten(x)
         x = self.fc(x)
-        x = (math.sqrt(c)/torch.linalg.vector_norm(x)) * x 
+        x = (math.sqrt(self.c)/torch.linalg.vector_norm(x)) * x 
         return x
 
 class CNNVoxCeleb:

@@ -23,21 +23,24 @@ class DatasetSplit(Dataset):
         image, label = self.dataset[self.idxs[item]]
         return image, label
 
-class UVLoss():
-    def __init__():
-        pass
+# class UVLoss():
+#     def __init__():
+#         pass
 
-    def forward():
-        pass
+#     def forward():
+#         pass
 
 class LocalUpdate(object):
     def __init__(self, args, dataset=None, idxs=None):
         self.args = args
-        self.loss_func = UVLoss() #Custom loss function
         self.selected_clients = []
         self.ldr_train = DataLoader(DatasetSplit(dataset, idxs), batch_size=self.args.local_bs, shuffle=True)
 
-    def train(self, net, c):
+    #UV Loss Function
+    def uv_loss_pos(self, nn_output, user_vector):
+        return np.max(0, 1 - ((1/self.args.code_length) * np.dot(user_vector, nn_output)))
+
+    def train(self, net, user_vectors):
         net.train()
         # train and update
         optimizer = torch.optim.SGD(net.parameters(), lr=0.1, momentum=self.args.momentum) #lr = learning rate
@@ -50,7 +53,8 @@ class LocalUpdate(object):
                 images, labels = images.to(self.args.device), labels.to(self.args.device)
                 net.zero_grad() #To avoid gradient accumulation
                 log_probs = net(images)
-                loss = self.loss_func(log_probs, labels, c)
+                curr_user_vector = user_vectors[labels.numpy()]
+                loss = self.uv_loss(log_probs, curr_user_vector)
                 loss.backward() 
                 optimizer.step()  
                 scheduler.step() 

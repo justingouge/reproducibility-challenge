@@ -5,6 +5,7 @@
 
 import numpy as np
 from torchvision import datasets, transforms
+import random
 
 # def mnist_iid(dataset, num_users):
 #     """
@@ -63,14 +64,43 @@ from torchvision import datasets, transforms
 #         all_idxs = list(set(all_idxs) - dict_users[i])
 #     return dict_users
 
-def celebA(dataset, num_users):
+def celebA_split(dataset):
+    dataset_train = []
+    dataset_validation = []
+    dataset_test = []
+    #print(dataset[0][0].shape)
+    thirty_or_more_images = []
+    temp_collection = {}
+    #np.random.shuffle(dataset) #comment out if results are being really weird
+    for i in range(200000):
+        curr_identity = dataset[i][1].item()
+        if str(curr_identity) not in temp_collection:
+            temp_collection[str(curr_identity)] = []
+        
+        if len(temp_collection[str(curr_identity)]) < 30:
+            temp_collection[str(curr_identity)].append(dataset[i])
+        
+    for identity in temp_collection:
+        if len(temp_collection[identity]) >= 30:
+            thirty_or_more_images.append(temp_collection[identity])
+
+    dataset_combined = random.sample(thirty_or_more_images, 1000)
+
+    for x in dataset_combined:
+        dataset_train.append(x[0:20])
+        dataset_validation.append(x[20:25])
+        dataset_test.append(x[25:30])
+
+    return dataset_train, dataset_validation, dataset_test
+
+def celebA_get_dict_users(dataset, num_users):
     #     """
     #     Sample non-I.I.D client data from celebA dataset
     #     """
-    num_shards, num_imgs = 0, 0
-    idx_shard = [i for i in range(num_shards)]
-    dict_users = {i: np.array([], dtype='int64') for i in range(num_users)}
-    idxs = np.arange(num_shards * num_imgs)
+    
+    dict_users = {}
+    for i in range(0, num_users):
+        dict_users[dataset[i][1].numpy()] = dataset[i][1].numpy()
 
     return dict_users
 
