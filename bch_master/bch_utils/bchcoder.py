@@ -22,11 +22,11 @@ class BchCoder:
                  .format(self.n, self.k, self.q, self.m, self.b, self.d, self.g_poly))
 
     def encode(self, msg_poly):
-        log.info("msg: {}".format(msg_poly))
+        #print("msg: {}".format(msg_poly))
         shift_m_poly = msg_poly * Poly(x ** (self.n - self.k), x)
-        log.info("shift_m: {}".format(shift_m_poly))
+        #print("shift_m: {}".format(shift_m_poly))
         r_poly = (shift_m_poly % self.g_poly).trunc(self.q)
-        log.info("r: {}".format(r_poly))
+        #print("r: {}".format(r_poly))
         return (shift_m_poly - r_poly).trunc(self.q).all_coeffs()
 
     def decode(self, msg_poly):

@@ -39,15 +39,14 @@ def generate(n, b, d, code_file):
     r, g = bch_gen.gen()
     np.savez_compressed(code_file, n=n, b=b, d=d, r=r.all_coeffs()[::-1], g=g.all_coeffs()[::-1])
     #log.info("BCH code saved to {} file".format(code_file))
-    #return r, g
 
 def encode(code_file, input_arr, block=False):
     code = np.load(code_file, allow_pickle=True)
     bch = BchCoder(int(code['n']), int(code['b']), int(code['d']), Poly(code['r'][::-1], alpha),
                    Poly(code['g'][::-1], x))
     if not block:
-        if len(input_arr) > bch.k:
-            raise Exception("Input is too large for current BCH code (max: {})".format(bch.k))
+        # if len(input_arr) > bch.k:
+        #     raise Exception("Input is too large for current BCH code (max: {})".format(bch.k))
         return bch.encode(Poly(input_arr[::-1], x))[::-1]
 
     input_arr = padding_encode(input_arr, bch.k)
