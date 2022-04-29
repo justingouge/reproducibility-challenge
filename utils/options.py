@@ -12,7 +12,7 @@ def args_parser():
     parser.add_argument('--frac', type=float, default=0.01, help="the fraction of clients: C")
     parser.add_argument('--local_ep', type=int, default=1, help="the number of local epochs: E")
     parser.add_argument('--local_bs', type=int, default=10, help="local batch size: B")
-    parser.add_argument('--bs', type=int, default=128, help="test batch size")
+    parser.add_argument('--bs', type=int, default=1000, help="test batch size")
     #parser.add_argument('--lr', type=float, default=0.01, help="learning rate")
     parser.add_argument('--momentum', type=float, default=0, help="SGD momentum (default: 0)") #method which helps accelerate gradients vectors in the right directions, thus leading to faster converging
     parser.add_argument('--split', type=str, default='user', help="train-test split type, user or sample")
@@ -38,5 +38,7 @@ def args_parser():
     parser.add_argument('--seed', type=int, default=1, help='random seed (default: 1)')
     parser.add_argument('--all_clients', action='store_true', help='aggregation over all clients')
     parser.add_argument('--code_length', type=int, default=127, help='Code length for BCH codeword')
+    parser.add_argument('--message_length', type=int, default=64, help='Message length for BCH codeword')
+    parser.add_argument('--d_min', type=int, default=21, help='D value for BCH codeword generation')
     args = parser.parse_args()
     return args
